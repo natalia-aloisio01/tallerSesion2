@@ -1,0 +1,61 @@
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+public class WhendoXpath {
+    private AppiumDriver driver;
+
+    @Before
+    public void initializeAppium() throws MalformedURLException {
+    //create el objet capabilities
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+    // instance el objet con su valor
+        capabilities.setCapability("deviceName","R28M402AG3H");
+        capabilities.setCapability("platformVersion","10");
+        capabilities.setCapability("appPackage","com.vrproductiveapps.whendo");
+        capabilities.setCapability("appActivity",".ui.ShareReceiveActivity");
+        capabilities.setCapability("platformName","Android");
+
+    //inicia el driver
+        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"),capabilities);
+
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    }
+    @Test
+    public void verifyAddition()  {
+
+        String title = "Nota 1";
+        String note  = "Realizar taller 2";
+
+
+        //click button add
+        driver.findElement(By.xpath("//android.widget.ListView[@resource-id='com.vrproductiveapps.whendo:id/notesList']")).click();
+        //title
+        driver.findElement(By.xpath("//android.widget.EditText[@resource-id='com.vrproductiveapps.whendo:id/noteTextTitle']")).sendKeys(title);
+        //notes
+        driver.findElement(By.xpath("//android.widget.EditText[@resource-id='com.vrproductiveapps.whendo:id/noteTextNotes']")).sendKeys(note);
+        //click button save
+        driver.findElement(By.xpath("//android.widget.TextView[@resource-id='com.vrproductiveapps.whendo:id/saveItem']")).click();
+        //verify result
+        String expectedNote = "Nota 1";
+        String actualList=driver.findElement(By.xpath("//android.widget.TextView[@resource-id=''"+title+"]")).getText();
+        Assert.assertEquals("No se agregaron tareas ",expectedNote,actualList);
+
+       
+
+    }
+    @After
+    public void closeApp(){
+
+        driver.quit();
+    }
+}
